@@ -1,0 +1,39 @@
+# =============================================================================
+# deadman_switch_params.yaml
+# Safety deadman switch configuration for RadioMaster MT12 joystick.
+#
+# The deadman button MUST be held continuously for ANY motion to occur.
+# Releasing it immediately stops the car at 50 Hz.
+# =============================================================================
+
+deadman_switch:
+  ros__parameters:
+
+    # -------------------------------------------------------------------------
+    # RadioMaster MT12 button mapping
+    # Run: ros2 topic echo /joy  while pressing buttons to find indices
+    # -------------------------------------------------------------------------
+    # Button index of the deadman switch (hold to enable motion)
+    # RadioMaster MT12: SF switch = button 5 (top-right 2-position switch)
+    deadman_button_idx: 5
+
+    # -------------------------------------------------------------------------
+    # Manual drive axis mapping (used in MAPPING_MANUAL state)
+    # -------------------------------------------------------------------------
+    manual_speed_axis: 1     # Left stick vertical  (push up = forward)
+    manual_steer_axis: 3     # Right stick horizontal (right = right turn)
+
+    # Maximum manual speed when joystick axis is at full deflection
+    manual_max_speed: 3.0    # [m/s] Conservative for safe manual driving
+
+    # Vehicle steering limit (replicated here for manual drive scaling)
+    vehicle.max_steering_angle: 0.43  # [rad]
+
+    # -------------------------------------------------------------------------
+    # Safety timeouts
+    # -------------------------------------------------------------------------
+    # If no /joy message received within this time → STOP (controller dead)
+    joy_timeout_s: 0.5       # [s]
+
+    # Rate at which zero velocity is published when deadman is released
+    zero_publish_rate_hz: 50.0  # [Hz]

@@ -1,0 +1,27 @@
+# =============================================================================
+# vehicle_params.yaml
+# Single source of truth for all physical vehicle parameters.
+# Based on: Traxxas Slash 4x4 with F1TENTH hardware kit.
+# DO NOT CHANGE these values without re-running system_id.launch.py.
+# =============================================================================
+
+vehicle:
+  wheelbase: 0.324          # [m] Distance between front and rear axle centers
+  width: 0.296              # [m] Vehicle width (chassis + wheels)
+  length: 0.568             # [m] Vehicle length (front bumper to rear bumper)
+  mass: 3.0                 # [kg] Total vehicle mass (car + electronics + battery)
+  max_steering_angle: 0.43  # [rad] Maximum steering angle at servo limits (~24.6 deg)
+  max_speed: 10.0           # [m/s] Maximum allowable speed during racing
+  min_speed: 0.5            # [m/s] Minimum speed (avoid stall)
+  tyre_diameter: 0.100      # [m] Tyre outer diameter (used for ERPM → speed conversion)
+
+# ROS 2 topic names — referenced by all nodes to ensure consistency
+topics:
+  scan: "/scan"                        # sensor_msgs/LaserScan from Hokuyo UST-10LX
+  odom: "/ego_racecar/odom"            # nav_msgs/Odometry from VESC odometry
+  drive: "/drive"                      # ackermann_msgs/AckermannDriveStamped
+  map: "/map"                          # nav_msgs/OccupancyGrid from SLAM Toolbox
+  joy: "/joy"                          # sensor_msgs/Joy from RadioMaster MT12
+  racing_line: "/racing_line"          # nav_msgs/Path published by racing_line_generator
+  race_mode: "/race_mode"              # std_msgs/String for state machine transitions
+  marker_array: "/race_stack/markers"  # visualization_msgs/MarkerArray for RViz2

@@ -1,0 +1,52 @@
+# =============================================================================
+# mppi_params.yaml
+# ALL parameters in this file are LIVE-TUNABLE via:
+#   ros2 param set /mppi_controller mppi.<param_name> <value>
+# or via the rqt_reconfigure GUI launched by racing.launch.py.
+# =============================================================================
+
+mppi_controller:
+  ros__parameters:
+
+    # -------------------------------------------------------------------------
+    # Vehicle kinematics (mirrored from vehicle_params.yaml for self-contained loading)
+    # -------------------------------------------------------------------------
+    vehicle:
+      wheelbase: 0.324          # [m] Bicycle model wheelbase
+      max_steering_angle: 0.43  # [rad] Hard clamp on steering commands
+      max_speed: 10.0           # [m/s] Hard clamp on speed commands
+      min_speed: 0.5            # [m/s] Minimum forward speed during racing
+
+    # -------------------------------------------------------------------------
+    # Rollout Configuration
+    # -------------------------------------------------------------------------
+    mppi:
+      K: 1000       # Number of parallel trajectory rollouts (CPU-tuned for Intel i7)
+      T: 20         # Prediction horizon in timesteps
+      dt: 0.05      # [s] Integration timestep per rollout step (T * dt = 1.0s lookahead)
+
+      # -----------------------------------------------------------------------
+      # Exploration / Temperature
+      # -----------------------------------------------------------------------
+      lambda: 0.1   # Temperature λ: low→exploit best trajectory, high→explore more
+
+      # -----------------------------------------------------------------------
+      # Control Noise Standard Deviations (Gaussian perturbations added to u_sequence)
+      # -----------------------------------------------------------------------
+      noise_std_speed: 1.0       # [m/s] Speed perturbation σ
+      noise_std_steering: 0.15   # [rad] Steering perturbation σ
+
+      # -----------------------------------------------------------------------
+      # Cost Function Weights
+      # -----------------------------------------------------------------------
+      weight_reference_track: 10.0    # Penalize lateral deviation from racing line
+      weight_speed_reward: 1.0        # Reward high speed (enters as negative cost)
+      weight_obstacle_penalty: 500.0  # Penalize proximity to LiDAR-detected obstacles
+      weight_heading: 2.0             # Penalize heading misalignment with racing line tangent
+      weight_boundary: 200.0          # Penalize rollouts that leave the track boundary
+      weight_control_smoothness: 0.1  # Penalize large Δu between consecutive timesteps
+
+      # -----------------------------------------------------------------------
+      # Safety Constraints
+      # -----------------------------------------------------------------------
+      obstacle_clearance_m: 0.35  # [m] Distance at which obstacle penalty becomes maximum

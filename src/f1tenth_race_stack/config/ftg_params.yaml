@@ -1,0 +1,17 @@
+# =============================================================================
+# ftg_params.yaml
+# Follow-The-Gap parameters — all LIVE-TUNABLE via:
+#   ros2 param set /follow_the_gap ftg.<param_name> <value>
+# Conservative values for safe autonomous mapping at low speed.
+# =============================================================================
+
+follow_the_gap:
+  ros__parameters:
+
+    ftg:
+      max_speed: 3.0        # [m/s] Maximum speed during autonomous mapping
+      min_speed: 0.5        # [m/s] Minimum speed at sharp steering angles
+      bubble_radius: 0.40   # [m] Safety bubble radius (car_width/2 + margin = 0.148 + 0.252)
+      max_lidar_range: 10.0 # [m] Cap LiDAR readings at this range; beyond is considered free
+      gap_selection: "largest"   # "largest" = longest contiguous gap; "furthest" = gap with max depth
+      steering_gain: 1.0    # Multiplier applied to raw steering output (tune for responsiveness)

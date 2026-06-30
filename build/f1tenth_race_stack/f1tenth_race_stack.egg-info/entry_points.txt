@@ -1,0 +1,11 @@
+[console_scripts]
+deadman_switch = f1tenth_race_stack.utils.deadman_switch:main
+follow_the_gap = f1tenth_race_stack.mapping.follow_the_gap:main
+mppi_controller = f1tenth_race_stack.controller.mppi_controller:main
+pure_pursuit = f1tenth_race_stack.controller.pure_pursuit:main
+race_state_machine = f1tenth_race_stack.state_machine.race_state_machine:main
+racing_line_generator = f1tenth_race_stack.racing_line.racing_line_generator:main
+system_id_driver = f1tenth_race_stack.utils.system_id_driver:main
+vesc_bridge = f1tenth_race_stack.utils.vesc_bridge:main
+visualizer = f1tenth_race_stack.utils.visualizer:main
+

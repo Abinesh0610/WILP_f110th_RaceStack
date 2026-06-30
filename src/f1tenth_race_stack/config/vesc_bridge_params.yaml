@@ -1,0 +1,19 @@
+# =============================================================================
+# vesc_bridge_params.yaml
+# Parameters for VESC MK-VI motor controller bridge.
+# Calibrate these via system_id.launch.py before racing.
+# =============================================================================
+
+vesc_bridge:
+  ros__parameters:
+
+    vesc_bridge:
+      # ERPM gain: converts desired speed [m/s] → ERPM for the VESC motor controller
+      # Formula: erpm = speed_mps * erpm_gain
+      # Tune: drive at known speed and match to /sensors/core ERPM reading
+      erpm_gain: 4614.0            # [ERPM / (m/s)] — calibrated for tyre_diameter = 0.100 m
+
+      # Servo mapping: converts steering_angle [rad] → servo position [0.0 to 1.0]
+      # Formula: servo_pos = steering_angle * steering_to_servo_gain + steering_to_servo_offset
+      steering_to_servo_gain: -0.64  # [servo_units / rad] Negative = right steer → higher servo
+      steering_to_servo_offset: 0.5  # Servo center position (0.5 = midpoint of 0.0–1.0 range)
