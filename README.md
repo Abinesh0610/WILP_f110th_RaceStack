@@ -1,4 +1,4 @@
-# F1TENTH Race Stack: From Scratch to Advanced Racing
+# F1TENTH Race Stack by WILP
 
 > A production-quality, ROS 2 Humble autonomous racing stack for the F1TENTH Traxxas Slash 4x4 platform. This stack handles everything from system identification and map generation to advanced Time Trial and Head-to-Head racing algorithms, complete with a hardware deadman switch for safety.
 
