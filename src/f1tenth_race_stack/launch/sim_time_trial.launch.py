@@ -99,6 +99,22 @@ def generate_launch_description() -> LaunchDescription:
         name='race_stack_visualizer',
     )
 
+    # Lap counter popup — starts after pure_pursuit is guaranteed running
+    lap_counter_node = TimerAction(
+        period=6.0,
+        actions=[Node(
+            package='f1tenth_race_stack',
+            executable='lap_counter',
+            name='lap_counter',
+            output='screen',
+            parameters=[{
+                'departure_threshold': 2.5,
+                'arrival_threshold': 1.5,
+                'odom_topic': '/ego_racecar/odom',
+            }]
+        )]
+    )
+
     # rqt_node = TimerAction(
     #     period=2.0,
     #     actions=[Node(package='rqt_reconfigure', executable='rqt_reconfigure', output='screen')]
@@ -113,6 +129,7 @@ def generate_launch_description() -> LaunchDescription:
         pure_pursuit_node,
         state_machine_node,
         visualizer_node,
+        lap_counter_node,
 
         # rqt_node,
     ])

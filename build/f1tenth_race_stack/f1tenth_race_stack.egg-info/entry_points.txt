@@ -1,6 +1,7 @@
 [console_scripts]
 deadman_switch = f1tenth_race_stack.utils.deadman_switch:main
 follow_the_gap = f1tenth_race_stack.mapping.follow_the_gap:main
+lap_counter = f1tenth_race_stack.utils.lap_counter:main
 mppi_controller = f1tenth_race_stack.controller.mppi_controller:main
 pure_pursuit = f1tenth_race_stack.controller.pure_pursuit:main
 race_state_machine = f1tenth_race_stack.state_machine.race_state_machine:main

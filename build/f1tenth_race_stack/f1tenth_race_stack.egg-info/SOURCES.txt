@@ -28,6 +28,7 @@ f1tenth_race_stack/state_machine/__init__.py
 f1tenth_race_stack/state_machine/race_state_machine.py
 f1tenth_race_stack/utils/__init__.py
 f1tenth_race_stack/utils/deadman_switch.py
+f1tenth_race_stack/utils/lap_counter.py
 f1tenth_race_stack/utils/system_id_driver.py
 f1tenth_race_stack/utils/vesc_bridge.py
 f1tenth_race_stack/utils/visualizer.py

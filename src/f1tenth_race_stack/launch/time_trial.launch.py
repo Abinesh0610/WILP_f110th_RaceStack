@@ -175,6 +175,22 @@ def generate_launch_description() -> LaunchDescription:
         output='screen'
     )
 
+    # Lap counter popup
+    lap_counter_node = TimerAction(
+        period=6.0,
+        actions=[Node(
+            package='f1tenth_race_stack',
+            executable='lap_counter',
+            name='lap_counter',
+            output='screen',
+            parameters=[{
+                'departure_threshold': 2.5,
+                'arrival_threshold': 1.5,
+                'odom_topic': '/ego_racecar/odom',
+            }]
+        )]
+    )
+
     # ------------------------------------------------------------------
     # rqt_reconfigure — live tuning GUI (delayed 4 s)
     # ------------------------------------------------------------------
@@ -218,6 +234,7 @@ def generate_launch_description() -> LaunchDescription:
         vesc_bridge_node,
         state_machine_node,
         visualizer_node,
+        lap_counter_node,
         rviz_node,
         rqt_node,
     ])

@@ -58,6 +58,8 @@ setup(
             'deadman_switch = f1tenth_race_stack.utils.deadman_switch:main',
             # System ID
             'system_id_driver = f1tenth_race_stack.utils.system_id_driver:main',
+            # Lap Counter (Time Trial popup)
+            'lap_counter = f1tenth_race_stack.utils.lap_counter:main',
         ],
     },
 )
