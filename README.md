@@ -1,4 +1,5 @@
 # F1TENTH Race Stack by WILP
+<img width="1600" height="739" alt="hero-bg" src="https://github.com/user-attachments/assets/f14fda60-5256-4c28-adec-1de83a03e698" />
 
 > A production-quality, ROS 2 Humble autonomous racing stack for the F1TENTH Traxxas Slash 4x4 platform. This stack handles everything from system identification and map generation to advanced Time Trial and Head-to-Head racing algorithms, complete with a hardware deadman switch for safety.
 
