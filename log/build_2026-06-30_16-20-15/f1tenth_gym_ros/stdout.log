@@ -1,0 +1,29 @@
+running develop
+running egg_info
+creating f1tenth_gym_ros.egg-info
+writing f1tenth_gym_ros.egg-info/PKG-INFO
+writing dependency_links to f1tenth_gym_ros.egg-info/dependency_links.txt
+writing entry points to f1tenth_gym_ros.egg-info/entry_points.txt
+writing requirements to f1tenth_gym_ros.egg-info/requires.txt
+writing top-level names to f1tenth_gym_ros.egg-info/top_level.txt
+writing manifest file 'f1tenth_gym_ros.egg-info/SOURCES.txt'
+reading manifest file 'f1tenth_gym_ros.egg-info/SOURCES.txt'
+writing manifest file 'f1tenth_gym_ros.egg-info/SOURCES.txt'
+running build_ext
+Creating /home/bits/ABINESH_Packages/racer_ws/install/f1tenth_gym_ros/lib/python3.10/site-packages/f1tenth-gym-ros.egg-link (link to .)
+Installing gym_bridge script to /home/bits/ABINESH_Packages/racer_ws/install/f1tenth_gym_ros/lib/f1tenth_gym_ros
+
+Installed /home/bits/ABINESH_Packages/racer_ws/build/f1tenth_gym_ros
+running symlink_data
+creating /home/bits/ABINESH_Packages/racer_ws/install/f1tenth_gym_ros/share/ament_index
+creating /home/bits/ABINESH_Packages/racer_ws/install/f1tenth_gym_ros/share/ament_index/resource_index
+creating /home/bits/ABINESH_Packages/racer_ws/install/f1tenth_gym_ros/share/ament_index/resource_index/packages
+symbolically linking /home/bits/ABINESH_Packages/racer_ws/build/f1tenth_gym_ros/resource/f1tenth_gym_ros -> /home/bits/ABINESH_Packages/racer_ws/install/f1tenth_gym_ros/share/ament_index/resource_index/packages
+symbolically linking /home/bits/ABINESH_Packages/racer_ws/build/f1tenth_gym_ros/package.xml -> /home/bits/ABINESH_Packages/racer_ws/install/f1tenth_gym_ros/share/f1tenth_gym_ros
+creating /home/bits/ABINESH_Packages/racer_ws/install/f1tenth_gym_ros/share/f1tenth_gym_ros/launch
+symbolically linking /home/bits/ABINESH_Packages/racer_ws/build/f1tenth_gym_ros/launch/gym_bridge_launch.py -> /home/bits/ABINESH_Packages/racer_ws/install/f1tenth_gym_ros/share/f1tenth_gym_ros/launch
+symbolically linking /home/bits/ABINESH_Packages/racer_ws/build/f1tenth_gym_ros/launch/ego_racecar.xacro -> /home/bits/ABINESH_Packages/racer_ws/install/f1tenth_gym_ros/share/f1tenth_gym_ros/launch
+symbolically linking /home/bits/ABINESH_Packages/racer_ws/build/f1tenth_gym_ros/launch/opp_racecar.xacro -> /home/bits/ABINESH_Packages/racer_ws/install/f1tenth_gym_ros/share/f1tenth_gym_ros/launch
+symbolically linking /home/bits/ABINESH_Packages/racer_ws/build/f1tenth_gym_ros/launch/gym_bridge.rviz -> /home/bits/ABINESH_Packages/racer_ws/install/f1tenth_gym_ros/share/f1tenth_gym_ros/launch
+creating /home/bits/ABINESH_Packages/racer_ws/install/f1tenth_gym_ros/share/f1tenth_gym_ros/config
+symbolically linking /home/bits/ABINESH_Packages/racer_ws/build/f1tenth_gym_ros/config/sim.yaml -> /home/bits/ABINESH_Packages/racer_ws/install/f1tenth_gym_ros/share/f1tenth_gym_ros/config

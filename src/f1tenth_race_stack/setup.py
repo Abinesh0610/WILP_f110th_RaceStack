@@ -42,8 +42,10 @@ setup(
         'console_scripts': [
             # Mapping module
             'follow_the_gap = f1tenth_race_stack.mapping.follow_the_gap:main',
-            # Racing line generator
+            # Racing line generator (from map)
             'racing_line_generator = f1tenth_race_stack.racing_line.racing_line_generator:main',
+            # Racing line publisher (from pre-computed CSV, used in simulation)
+            'racing_line_publisher = f1tenth_race_stack.racing_line.racing_line_publisher:main',
             # MPPI Controller
             'mppi_controller = f1tenth_race_stack.controller.mppi_controller:main',
             # Pure Pursuit Controller

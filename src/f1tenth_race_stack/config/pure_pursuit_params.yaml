@@ -22,21 +22,21 @@ pure_pursuit:
       # Lookahead distance: distance ahead on the racing line to aim for.
       # Too small → unstable oscillation. Too large → cuts corners badly.
       # Typical range for F1TENTH: 0.8 m (tight track) to 2.0 m (fast straight)
-      lookahead_distance: 1.0      # [m] Base lookahead distance
+      lookahead_distance: 0.8      # [m] Base lookahead distance
 
       # Adaptive lookahead: dynamically increases lookahead with speed.
       # lookahead = lookahead_distance + lookahead_gain * current_speed
       # Set to 0.0 to disable adaptive lookahead.
-      lookahead_gain: 0.2          # [(m) / (m/s)]
+      lookahead_gain: 0.05          # [(m) / (m/s)]
 
       # Speed scale: multiply the racing line's target speed by this factor.
       # 1.0 = full racing speed from the CSV profile
       # 0.8 = 80% of racing speed (safer during initial laps)
-      speed_scale: 1.0             # [dimensionless]
+      speed_scale: 0.5             # [dimensionless]
 
       # Speed limits (safety clamps regardless of racing line profile)
       min_speed: 0.5               # [m/s] Never go slower than this
-      max_speed: 8.0               # [m/s] Never go faster than this
+      max_speed: 4.0               # [m/s] Never go faster than this
 
       # Control loop frequency
       control_frequency_hz: 40.0  # [Hz] Pure Pursuit runs at 40 Hz

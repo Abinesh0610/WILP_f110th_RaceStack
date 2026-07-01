@@ -1,0 +1,31 @@
+[0.470s] Invoking command in '/home/bits/ABINESH_Packages/racer_ws/build/f1tenth_gym_ros': PYTHONPATH=/home/bits/ABINESH_Packages/racer_ws/build/f1tenth_gym_ros/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/bits/ABINESH_Packages/racer_ws/install/f1tenth_gym_ros/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py develop --editable --build-directory /home/bits/ABINESH_Packages/racer_ws/build/f1tenth_gym_ros/build --no-deps symlink_data
+[0.640s] running develop
+[0.752s] running egg_info
+[0.752s] creating f1tenth_gym_ros.egg-info
+[0.758s] writing f1tenth_gym_ros.egg-info/PKG-INFO
+[0.758s] writing dependency_links to f1tenth_gym_ros.egg-info/dependency_links.txt
+[0.759s] writing entry points to f1tenth_gym_ros.egg-info/entry_points.txt
+[0.759s] writing requirements to f1tenth_gym_ros.egg-info/requires.txt
+[0.759s] writing top-level names to f1tenth_gym_ros.egg-info/top_level.txt
+[0.759s] writing manifest file 'f1tenth_gym_ros.egg-info/SOURCES.txt'
+[0.772s] reading manifest file 'f1tenth_gym_ros.egg-info/SOURCES.txt'
+[0.772s] writing manifest file 'f1tenth_gym_ros.egg-info/SOURCES.txt'
+[0.797s] running build_ext
+[0.797s] Creating /home/bits/ABINESH_Packages/racer_ws/install/f1tenth_gym_ros/lib/python3.10/site-packages/f1tenth-gym-ros.egg-link (link to .)
+[0.797s] Installing gym_bridge script to /home/bits/ABINESH_Packages/racer_ws/install/f1tenth_gym_ros/lib/f1tenth_gym_ros
+[0.797s] 
+[0.797s] Installed /home/bits/ABINESH_Packages/racer_ws/build/f1tenth_gym_ros
+[0.797s] running symlink_data
+[0.797s] creating /home/bits/ABINESH_Packages/racer_ws/install/f1tenth_gym_ros/share/ament_index
+[0.797s] creating /home/bits/ABINESH_Packages/racer_ws/install/f1tenth_gym_ros/share/ament_index/resource_index
+[0.797s] creating /home/bits/ABINESH_Packages/racer_ws/install/f1tenth_gym_ros/share/ament_index/resource_index/packages
+[0.797s] symbolically linking /home/bits/ABINESH_Packages/racer_ws/build/f1tenth_gym_ros/resource/f1tenth_gym_ros -> /home/bits/ABINESH_Packages/racer_ws/install/f1tenth_gym_ros/share/ament_index/resource_index/packages
+[0.797s] symbolically linking /home/bits/ABINESH_Packages/racer_ws/build/f1tenth_gym_ros/package.xml -> /home/bits/ABINESH_Packages/racer_ws/install/f1tenth_gym_ros/share/f1tenth_gym_ros
+[0.797s] creating /home/bits/ABINESH_Packages/racer_ws/install/f1tenth_gym_ros/share/f1tenth_gym_ros/launch
+[0.797s] symbolically linking /home/bits/ABINESH_Packages/racer_ws/build/f1tenth_gym_ros/launch/gym_bridge_launch.py -> /home/bits/ABINESH_Packages/racer_ws/install/f1tenth_gym_ros/share/f1tenth_gym_ros/launch
+[0.797s] symbolically linking /home/bits/ABINESH_Packages/racer_ws/build/f1tenth_gym_ros/launch/ego_racecar.xacro -> /home/bits/ABINESH_Packages/racer_ws/install/f1tenth_gym_ros/share/f1tenth_gym_ros/launch
+[0.797s] symbolically linking /home/bits/ABINESH_Packages/racer_ws/build/f1tenth_gym_ros/launch/opp_racecar.xacro -> /home/bits/ABINESH_Packages/racer_ws/install/f1tenth_gym_ros/share/f1tenth_gym_ros/launch
+[0.797s] symbolically linking /home/bits/ABINESH_Packages/racer_ws/build/f1tenth_gym_ros/launch/gym_bridge.rviz -> /home/bits/ABINESH_Packages/racer_ws/install/f1tenth_gym_ros/share/f1tenth_gym_ros/launch
+[0.797s] creating /home/bits/ABINESH_Packages/racer_ws/install/f1tenth_gym_ros/share/f1tenth_gym_ros/config
+[0.797s] symbolically linking /home/bits/ABINESH_Packages/racer_ws/build/f1tenth_gym_ros/config/sim.yaml -> /home/bits/ABINESH_Packages/racer_ws/install/f1tenth_gym_ros/share/f1tenth_gym_ros/config
+[0.824s] Invoked command in '/home/bits/ABINESH_Packages/racer_ws/build/f1tenth_gym_ros' returned '0': PYTHONPATH=/home/bits/ABINESH_Packages/racer_ws/build/f1tenth_gym_ros/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/bits/ABINESH_Packages/racer_ws/install/f1tenth_gym_ros/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py develop --editable --build-directory /home/bits/ABINESH_Packages/racer_ws/build/f1tenth_gym_ros/build --no-deps symlink_data

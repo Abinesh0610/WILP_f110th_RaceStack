@@ -1,5 +1,5 @@
-matplotlib
-numpy
-opencv-python
-scipy
 setuptools
+numpy
+scipy
+opencv-python
+matplotlib

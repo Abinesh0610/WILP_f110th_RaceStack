@@ -1,0 +1,26 @@
+[0.502s] Invoking command in '/home/bits/ABINESH_Packages/racer_ws/build/f1tenth_race_stack': PYTHONPATH=/home/bits/ABINESH_Packages/racer_ws/build/f1tenth_race_stack/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/bits/ABINESH_Packages/racer_ws/install/f1tenth_race_stack/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py develop --editable --build-directory /home/bits/ABINESH_Packages/racer_ws/build/f1tenth_race_stack/build --no-deps symlink_data
+[0.678s] running develop
+[0.795s] running egg_info
+[0.803s] writing f1tenth_race_stack.egg-info/PKG-INFO
+[0.803s] writing dependency_links to f1tenth_race_stack.egg-info/dependency_links.txt
+[0.803s] writing entry points to f1tenth_race_stack.egg-info/entry_points.txt
+[0.806s] writing requirements to f1tenth_race_stack.egg-info/requires.txt
+[0.806s] writing top-level names to f1tenth_race_stack.egg-info/top_level.txt
+[0.818s] reading manifest file 'f1tenth_race_stack.egg-info/SOURCES.txt'
+[0.818s] writing manifest file 'f1tenth_race_stack.egg-info/SOURCES.txt'
+[0.844s] running build_ext
+[0.844s] Creating /home/bits/ABINESH_Packages/racer_ws/install/f1tenth_race_stack/lib/python3.10/site-packages/f1tenth-race-stack.egg-link (link to .)
+[0.845s] Installing deadman_switch script to /home/bits/ABINESH_Packages/racer_ws/install/f1tenth_race_stack/lib/f1tenth_race_stack
+[0.845s] Installing follow_the_gap script to /home/bits/ABINESH_Packages/racer_ws/install/f1tenth_race_stack/lib/f1tenth_race_stack
+[0.845s] Installing mppi_controller script to /home/bits/ABINESH_Packages/racer_ws/install/f1tenth_race_stack/lib/f1tenth_race_stack
+[0.845s] Installing pure_pursuit script to /home/bits/ABINESH_Packages/racer_ws/install/f1tenth_race_stack/lib/f1tenth_race_stack
+[0.845s] Installing race_state_machine script to /home/bits/ABINESH_Packages/racer_ws/install/f1tenth_race_stack/lib/f1tenth_race_stack
+[0.845s] Installing racing_line_generator script to /home/bits/ABINESH_Packages/racer_ws/install/f1tenth_race_stack/lib/f1tenth_race_stack
+[0.845s] Installing racing_line_publisher script to /home/bits/ABINESH_Packages/racer_ws/install/f1tenth_race_stack/lib/f1tenth_race_stack
+[0.845s] Installing system_id_driver script to /home/bits/ABINESH_Packages/racer_ws/install/f1tenth_race_stack/lib/f1tenth_race_stack
+[0.845s] Installing vesc_bridge script to /home/bits/ABINESH_Packages/racer_ws/install/f1tenth_race_stack/lib/f1tenth_race_stack
+[0.845s] Installing visualizer script to /home/bits/ABINESH_Packages/racer_ws/install/f1tenth_race_stack/lib/f1tenth_race_stack
+[0.846s] 
+[0.846s] Installed /home/bits/ABINESH_Packages/racer_ws/build/f1tenth_race_stack
+[0.846s] running symlink_data
+[0.872s] Invoked command in '/home/bits/ABINESH_Packages/racer_ws/build/f1tenth_race_stack' returned '0': PYTHONPATH=/home/bits/ABINESH_Packages/racer_ws/build/f1tenth_race_stack/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/bits/ABINESH_Packages/racer_ws/install/f1tenth_race_stack/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py develop --editable --build-directory /home/bits/ABINESH_Packages/racer_ws/build/f1tenth_race_stack/build --no-deps symlink_data

@@ -183,10 +183,17 @@ class RacingLineGenerator(Node):
             self.get_logger().error(f'Could not load map image: {pgm_path}')
             return None, resolution, (origin[0], origin[1])
 
-        # ROS map convention: 205 = unknown, 254 = free, 0 = occupied
-        # We treat ≥ 200 as free space (includes unknown as traversable)
-        free_threshold = int(map_meta.get('free_thresh', 0.196) * 255)
-        binary_map = (img >= free_threshold).astype(np.uint8)
+        # ROS map convention: 254=free (white), 205=unknown (grey), 0=occupied (black)
+        # IMPORTANT: use a HIGH threshold so only truly-free (white) pixels pass.
+        # free_thresh in YAML is a probability (0.196), which maps to pixel value ~50.
+        # But that is the LOWER bound for free in probability space.
+        # In the PGM: pixel=254 means p_free=1.0, pixel=0 means p_occ=1.0.
+        # We want pixel > 200 (i.e. clearly free), NOT "> 50" which includes grey/unknown.
+        binary_map = (img > 200).astype(np.uint8)
+
+        # Erode free space by ~5 cells (0.25 m) to keep the skeleton away from walls
+        erode_kernel = np.ones((9, 9), np.uint8)
+        binary_map = cv2.erode(binary_map, erode_kernel, iterations=1)
 
         self.get_logger().info(
             f'Map loaded: {img.shape} | resolution={resolution} m | '

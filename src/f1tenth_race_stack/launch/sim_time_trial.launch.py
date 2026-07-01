@@ -35,42 +35,52 @@ def generate_launch_description() -> LaunchDescription:
         'racing_line_csv', default_value=os.path.join(maps_dir, 'racing_line.csv')
     )
 
-    slam_node = Node(
-        package='slam_toolbox',
-        executable='localization_slam_toolbox_node',
-        name='slam_toolbox',
-        output='screen',
-        parameters=[
-            os.path.join(config_dir, 'slam_params.yaml'),
-            {'mode': 'localization', 'map_file_name': LaunchConfiguration('map_path')}
-        ]
-    )
-
+    # The racing_line.csv is PRE-GENERATED — just load and publish it
+    # This is much faster than re-running the full generator on every launch
     racing_line_node = Node(
         package='f1tenth_race_stack',
         executable='racing_line_generator',
         name='racing_line_generator',
+        output='screen',
         parameters=[{
-            'map_path': LaunchConfiguration('map_path'),
+            'map_path': '',           # Empty = skip map processing
             'output_csv': LaunchConfiguration('racing_line_csv'),
             'v_max': 8.0,
             'v_min': 1.0,
             'curvature_gain': 2.5,
+            'publish_rate_hz': 5.0,  # Re-publish every 0.2s so late subscribers catch it
         }]
     )
 
-    pure_pursuit_node = Node(
+    # Pre-load the racing line from CSV and publish it directly
+    csv_publisher_node = Node(
         package='f1tenth_race_stack',
-        executable='pure_pursuit',
-        name='pure_pursuit',
+        executable='racing_line_publisher',
+        name='racing_line_publisher',
         output='screen',
-        parameters=[
-            os.path.join(config_dir, 'pure_pursuit_params.yaml'),
-            os.path.join(config_dir, 'vehicle_params.yaml'),
-        ],
-        remappings=[
-            ('/drive_cmd', '/drive')
-        ]
+        parameters=[{
+            'racing_line_csv': LaunchConfiguration('racing_line_csv'),
+        }]
+    )
+
+    # Delay pure_pursuit by 5s to ensure racing_line is fully published
+    pure_pursuit_node = TimerAction(
+        period=5.0,
+        actions=[Node(
+            package='f1tenth_race_stack',
+            executable='pure_pursuit',
+            name='pure_pursuit',
+            output='screen',
+            parameters=[
+                os.path.join(config_dir, 'pure_pursuit_params.yaml'),
+                # NOTE: vehicle_params.yaml is plain YAML (no ros__parameters key)
+                # and cannot be used with --params-file. Vehicle params are
+                # already declared inside pure_pursuit_params.yaml.
+            ],
+            remappings=[
+                ('/drive_cmd', '/drive'),
+            ]
+        )]
     )
 
 
@@ -79,6 +89,7 @@ def generate_launch_description() -> LaunchDescription:
         package='f1tenth_race_stack',
         executable='race_state_machine',
         name='race_state_machine',
+        output='screen',
         parameters=[{'initial_state': 'TIME_TRIAL'}]
     )
 
@@ -88,24 +99,20 @@ def generate_launch_description() -> LaunchDescription:
         name='race_stack_visualizer',
     )
 
-    rqt_node = TimerAction(
-        period=2.0,
-        actions=[Node(package='rqt_reconfigure', executable='rqt_reconfigure', output='screen')]
-    )
+    # rqt_node = TimerAction(
+    #     period=2.0,
+    #     actions=[Node(package='rqt_reconfigure', executable='rqt_reconfigure', output='screen')]
+    # )
 
-    rviz_node = TimerAction(
-        period=1.0,
-        actions=[Node(package='rviz2', executable='rviz2', arguments=['-d', rviz_config])]
-    )
 
     return LaunchDescription([
         map_path_arg,
         racing_line_csv_arg,
-        slam_node,
-        racing_line_node,
+
+        csv_publisher_node,
         pure_pursuit_node,
         state_machine_node,
         visualizer_node,
-        rviz_node,
-        rqt_node,
+
+        # rqt_node,
     ])

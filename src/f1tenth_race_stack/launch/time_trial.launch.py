@@ -112,7 +112,6 @@ def generate_launch_description() -> LaunchDescription:
         output='screen',
         parameters=[
             os.path.join(config_dir, 'pure_pursuit_params.yaml'),
-            os.path.join(config_dir, 'vehicle_params.yaml'),
         ]
     )
 
@@ -141,8 +140,7 @@ def generate_launch_description() -> LaunchDescription:
         executable='deadman_switch',
         name='deadman_switch',
         output='screen',
-        parameters=[os.path.join(config_dir, 'deadman_switch_params.yaml'),
-                    os.path.join(config_dir, 'vehicle_params.yaml')]
+        parameters=[os.path.join(config_dir, 'deadman_switch_params.yaml')]
     )
 
     # ------------------------------------------------------------------
@@ -153,8 +151,7 @@ def generate_launch_description() -> LaunchDescription:
         executable='vesc_bridge',
         name='vesc_bridge',
         output='screen',
-        parameters=[os.path.join(config_dir, 'vesc_bridge_params.yaml'),
-                    os.path.join(config_dir, 'vehicle_params.yaml')]
+        parameters=[os.path.join(config_dir, 'vesc_bridge_params.yaml')]
     )
 
     # ------------------------------------------------------------------

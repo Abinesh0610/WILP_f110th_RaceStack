@@ -59,94 +59,231 @@ source install/setup.bash
 
 ---
 
-## 3. Quick Reference Commands (Real Car Hardware)
+## 3. Complete Terminal Command Reference
 
-Here are the exact terminal commands to launch each mode of the race stack. 
-
-*(**Important Safety Rule**: For every command below, you must HOLD Button 5 (SF) on your RadioMaster MT12 joystick for the car to move. Release it to emergency stop).*
-
-### Mapping (Create your track map)
-**Manual Joystick Mapping:**
-```bash
-ros2 launch f1tenth_race_stack mapping_joystick.launch.py
-```
-**Autonomous Mapping (Follow-The-Gap):**
-```bash
-ros2 launch f1tenth_race_stack mapping_autonomous.launch.py
-```
-**Save the Map (run in a new terminal after mapping):**
-```bash
-ros2 run nav2_map_server map_saver_cli -f ~/racer_ws/src/f1tenth_race_stack/maps/f1tenth_track
-```
-
-### Path Generation
-**Generate optimal racing line from your saved map:**
-```bash
-ros2 run f1tenth_race_stack racing_line_generator \
-  --ros-args -p map_path:=$HOME/racer_ws/src/f1tenth_race_stack/maps/f1tenth_track.yaml
-```
-
-### Racing
-**Time Trials (Pure Pursuit - Fastest solo lap):**
-```bash
-ros2 launch f1tenth_race_stack time_trial.launch.py \
-  map_path:=$HOME/racer_ws/src/f1tenth_race_stack/maps/f1tenth_track.yaml \
-  racing_line_csv:=$HOME/racer_ws/src/f1tenth_race_stack/maps/racing_line.csv
-```
-**Head-to-Head (MPPI - Dynamic overtaking and obstacle avoidance):**
-```bash
-ros2 launch f1tenth_race_stack head_to_head.launch.py \
-  map_path:=$HOME/racer_ws/src/f1tenth_race_stack/maps/f1tenth_track.yaml \
-  racing_line_csv:=$HOME/racer_ws/src/f1tenth_race_stack/maps/racing_line.csv
-```
+> **Workspace path used throughout:** `~/ABINESH_Packages/racer_ws`
+> Always source your workspace first in every new terminal:
+> ```bash
+> source ~/ABINESH_Packages/racer_ws/install/setup.bash
+> ```
 
 ---
 
-## 4. For New Users: Running in Simulation
+### 🗺️ PHASE 1 — Mapping (Build the Track Map)
 
-If you are new to the package or do not have physical F1TENTH hardware yet, you can test everything using the official 2D physics simulator! Our stack is **100% plug-and-play compatible** with `f1tenth_gym_ros`.
+Choose ONE of the three options below. Keep Terminal 1 (gym_bridge) running for simulator modes.
 
-### Step 1: Install the Simulator
-Run this once to download and build the simulator in your workspace:
+#### Option A — Simulator Autonomous Mapping (Follow-The-Gap drives the car)
+
+**Terminal 1 — Start the Simulator:**
 ```bash
-# Install the core Python physics engine
-pip3 install git+https://github.com/f1tenth/f1tenth_gym.git
-
-# Clone the ROS 2 simulator wrapper
-cd ~/racer_ws/src
-git clone https://github.com/f1tenth/f1tenth_gym_ros.git
-
-# Build it
-cd ~/racer_ws
-source /opt/ros/humble/setup.bash
-colcon build --symlink-install --packages-select f1tenth_gym_ros
-```
-
-### Step 2: Run the Simulation
-We have provided dedicated `sim_` launch files that automatically bypass the hardware deadman switch and disable hardware nodes like the VESC bridge.
-
-**Terminal 1 (Start the Simulator World):**
-```bash
-source ~/racer_ws/install/setup.bash
 ros2 launch f1tenth_gym_ros gym_bridge_launch.py
 ```
 
-**Terminal 2 (Start our AI Brain):**
+**Terminal 2 — Launch FTG Autonomous Mapping:**
 ```bash
-source ~/racer_ws/install/setup.bash
+source ~/ABINESH_Packages/racer_ws/install/setup.bash
+ros2 launch f1tenth_race_stack sim_mapping.launch.py
+```
+Watch RViz — the car will drive itself and build the map automatically.
 
-# Option A: Run Time Trials (Pure Pursuit)
+---
+
+#### Option B — Real Car Manual Mapping (You drive with joystick)
+```bash
+source ~/ABINESH_Packages/racer_ws/install/setup.bash
+ros2 launch f1tenth_race_stack mapping_joystick.launch.py
+```
+> ⚠️ **Hold Button 5 (SF) on RadioMaster MT12 to enable the deadman switch.** Release to stop instantly.
+> Drive 2–3 full laps to close the loop cleanly.
+
+---
+
+#### Option C — Real Car Autonomous Mapping (Follow-The-Gap drives)
+```bash
+source ~/ABINESH_Packages/racer_ws/install/setup.bash
+ros2 launch f1tenth_race_stack mapping_autonomous.launch.py
+```
+> ⚠️ **Hold Button 5 (SF)** — FTG will autonomously steer around the track.
+
+---
+
+### 💾 PHASE 2 — Save the Map
+
+Once the map looks clean and complete in RViz, open a **new terminal** and run:
+```bash
+ros2 run nav2_map_server map_saver_cli \
+  -f ~/ABINESH_Packages/racer_ws/src/f1tenth_race_stack/maps/my_new_track
+```
+This saves **two files** in the `maps/` folder:
+- `my_new_track.png` — The black & white wall image
+- `my_new_track.yaml` — The map coordinates and resolution
+
+After saving, hit `Ctrl+C` in the mapping terminal to stop.
+
+---
+
+### 📐 PHASE 3 — Generate the Racing Line (CSV)
+
+After saving the map, run this command to calculate the optimal racing path and speed profile. Wait until you see `Successfully saved racing line`, then `Ctrl+C`.
+
+```bash
+source ~/ABINESH_Packages/racer_ws/install/setup.bash
+
+ros2 run f1tenth_race_stack racing_line_generator \
+  --ros-args \
+  -p map_path:=$HOME/ABINESH_Packages/racer_ws/src/f1tenth_race_stack/maps/my_new_track.yaml \
+  -p output_csv:=$HOME/ABINESH_Packages/racer_ws/src/f1tenth_race_stack/maps/my_new_track_racing_line.csv
+```
+This saves `my_new_track_racing_line.csv` in the `maps/` folder.
+
+> **For the Levine track (already done):**
+> Map: `levine_track.yaml` | CSV: `levine_racing_line.csv`
+> Regenerate anytime with:
+> ```bash
+> python3 ~/ABINESH_Packages/racer_ws/src/f1tenth_race_stack/scripts/generate_perfect_centerline.py
+> ```
+
+---
+
+### 🏎️ PHASE 4 — Time Trials (Solo Racing — Fastest Lap)
+
+**Uses: Pure Pursuit controller | No opponents needed**
+
+#### ► In Simulation
+
+**Terminal 1 — Start the Simulator:**
+```bash
+ros2 launch f1tenth_gym_ros gym_bridge_launch.py
+```
+
+**Terminal 2 — Launch Time Trials:**
+```bash
+source ~/ABINESH_Packages/racer_ws/install/setup.bash
 ros2 launch f1tenth_race_stack sim_time_trial.launch.py \
-  map_path:=$HOME/racer_ws/src/f1tenth_race_stack/maps/f1tenth_track.yaml \
-  racing_line_csv:=$HOME/racer_ws/src/f1tenth_race_stack/maps/racing_line.csv
+  map_path:=$HOME/ABINESH_Packages/racer_ws/src/f1tenth_race_stack/maps/levine_track.yaml \
+  racing_line_csv:=$HOME/ABINESH_Packages/racer_ws/src/f1tenth_race_stack/maps/levine_racing_line.csv
+```
+The car will start driving automatically after ~5 seconds.
 
-# Option B: Run Head-to-Head (MPPI)
+---
+
+#### ► On the Real Car
+
+**Terminal 1 — Start the hardware drivers (LiDAR + VESC + Joystick):**
+```bash
+# Replace with your team's actual hardware launch file
+ros2 launch f1tenth_race_stack hardware.launch.py
+```
+
+**Terminal 2 — Launch Time Trials:**
+```bash
+source ~/ABINESH_Packages/racer_ws/install/setup.bash
+ros2 launch f1tenth_race_stack time_trial.launch.py \
+  map_path:=$HOME/ABINESH_Packages/racer_ws/src/f1tenth_race_stack/maps/my_new_track.yaml \
+  racing_line_csv:=$HOME/ABINESH_Packages/racer_ws/src/f1tenth_race_stack/maps/my_new_track_racing_line.csv
+```
+> ⚠️ **Hold Button 5 (SF) on RadioMaster MT12 to start the car.**
+
+---
+
+### 🥊 PHASE 5 — Head-to-Head (Racing with Opponents)
+
+**Uses: MPPI controller | Dynamic overtaking and obstacle avoidance**
+
+#### ► In Simulation
+
+**Terminal 1 — Start the Simulator:**
+```bash
+ros2 launch f1tenth_gym_ros gym_bridge_launch.py
+```
+
+**Terminal 2 — Launch Head-to-Head:**
+```bash
+source ~/ABINESH_Packages/racer_ws/install/setup.bash
 ros2 launch f1tenth_race_stack sim_head_to_head.launch.py \
-  map_path:=$HOME/racer_ws/src/f1tenth_race_stack/maps/f1tenth_track.yaml \
-  racing_line_csv:=$HOME/racer_ws/src/f1tenth_race_stack/maps/racing_line.csv
+  map_path:=$HOME/ABINESH_Packages/racer_ws/src/f1tenth_race_stack/maps/levine_track.yaml \
+  racing_line_csv:=$HOME/ABINESH_Packages/racer_ws/src/f1tenth_race_stack/maps/levine_racing_line.csv
 ```
 
 ---
+
+#### ► On the Real Car
+
+**Terminal 1 — Start hardware drivers:**
+```bash
+ros2 launch f1tenth_race_stack hardware.launch.py
+```
+
+**Terminal 2 — Launch Head-to-Head:**
+```bash
+source ~/ABINESH_Packages/racer_ws/install/setup.bash
+ros2 launch f1tenth_race_stack head_to_head.launch.py \
+  map_path:=$HOME/ABINESH_Packages/racer_ws/src/f1tenth_race_stack/maps/my_new_track.yaml \
+  racing_line_csv:=$HOME/ABINESH_Packages/racer_ws/src/f1tenth_race_stack/maps/my_new_track_racing_line.csv
+```
+> ⚠️ **Hold Button 5 (SF) to start. The car will automatically swerve around opponents.**
+
+---
+
+### 🎛️ PHASE 6 — Live Parameter Tuning (While Car is Running)
+
+#### Open RQT Reconfigure GUI (in a new terminal)
+```bash
+ros2 run rqt_reconfigure rqt_reconfigure
+```
+> ⚠️ **CRITICAL**: In the GUI, **DO NOT click `use_sim_time`** checkbox. Only change these 3 parameters:
+> - `pure_pursuit.speed_scale` — how fast (0.1 = slow, 1.5 = fast)
+> - `pure_pursuit.lookahead_distance` — how far ahead the car looks (0.3 = tight, 2.0 = smooth)
+> - `pure_pursuit.lookahead_gain` — keep at `0.0` until comfortable
+
+#### Or use CLI commands in a new terminal (safer, recommended)
+```bash
+# Set speed to 50% of max racing line speed
+ros2 param set /pure_pursuit pure_pursuit.speed_scale 0.5
+
+# Set speed to 80% (faster)
+ros2 param set /pure_pursuit pure_pursuit.speed_scale 0.8
+
+# Tighten the lookahead for sharper corners
+ros2 param set /pure_pursuit pure_pursuit.lookahead_distance 0.8
+
+# Loosen the lookahead for smoother high-speed driving
+ros2 param set /pure_pursuit pure_pursuit.lookahead_distance 1.2
+```
+
+#### Speed Scale Reference Table
+| `speed_scale` | Actual Speed (straight) | km/h | Safe for? |
+|---|---|---|---|
+| `0.5` | 1.5 m/s | 5.4 km/h | Learning / first laps |
+| `0.8` | 2.4 m/s | 8.6 km/h | Confident tuning |
+| `1.0` | 3.0 m/s | 10.8 km/h | Full racing speed |
+| `1.5` | 4.5 m/s | 16.2 km/h | Max (clamped by safety limit) |
+
+---
+
+### 🔧 Rebuild After Code Changes
+
+If you edited any Python file in `f1tenth_race_stack`, rebuild before launching:
+```bash
+cd ~/ABINESH_Packages/racer_ws
+colcon build --packages-select f1tenth_race_stack --symlink-install
+source install/setup.bash
+```
+
+---
+
+## 4. Package Architecture: Two Folders Explained
+
+| Folder | Role | Used on Real Car? |
+|--------|------|-------------------|
+| `f1tenth_gym_ros` | **The Simulator** — Simulates physics, walls, LiDAR, and odometry | ❌ Never |
+| `f1tenth_race_stack` | **The Brain** — Pure Pursuit, FTG, MPPI, State Machine | ✅ Always |
+
+The Brain (`f1tenth_race_stack`) is **identical** whether running in the simulator or on the real car. It only subscribes to `/scan` and `/ego_racecar/odom` and publishes to `/drive`. The source of those topics (simulator vs real hardware) is completely transparent to the brain.
+
+---
+
 
 ## 5. Node Architecture & Explanations
 

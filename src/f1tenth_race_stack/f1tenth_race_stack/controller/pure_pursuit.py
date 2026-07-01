@@ -149,9 +149,39 @@ class PurePursuitController(Node):
             'pure_pursuit.control_frequency_hz').value
 
     def _param_callback(self, params: List[Parameter]) -> SetParametersResult:
-        """Live parameter update callback."""
-        self._load_params()
-        self.get_logger().info('PurePursuit parameters updated live.')
+        """Live parameter update callback — safe for rqt_reconfigure."""
+        for param in params:
+            # ── CRITICAL: Block use_sim_time changes from rqt_reconfigure ──
+            # Toggling use_sim_time while running kills the control timer.
+            if param.name == 'use_sim_time':
+                self.get_logger().warn(
+                    'Rejected change to use_sim_time via rqt_reconfigure. '
+                    'Do NOT click this checkbox while the car is running!')
+                return SetParametersResult(successful=False)
+
+            # ── Tuning parameters — accept with safety clamping ──
+            if param.name == 'pure_pursuit.lookahead_distance':
+                self.lookahead_distance = max(0.3, float(param.value))
+                self.get_logger().info(f'lookahead_distance → {self.lookahead_distance:.2f} m')
+            elif param.name == 'pure_pursuit.lookahead_gain':
+                self.lookahead_gain = max(0.0, float(param.value))
+                self.get_logger().info(f'lookahead_gain → {self.lookahead_gain:.3f}')
+            elif param.name == 'pure_pursuit.speed_scale':
+                self.speed_scale = max(0.1, min(1.5, float(param.value)))
+                self.get_logger().info(f'speed_scale → {self.speed_scale:.2f}')
+            elif param.name == 'pure_pursuit.min_speed':
+                self.min_speed = max(0.1, float(param.value))
+                self.get_logger().info(f'min_speed → {self.min_speed:.2f} m/s')
+            elif param.name == 'pure_pursuit.max_speed':
+                self.max_speed = max(0.5, min(10.0, float(param.value)))
+                self.get_logger().info(f'max_speed → {self.max_speed:.2f} m/s')
+            elif param.name == 'vehicle.wheelbase':
+                self.wheelbase = float(param.value)
+            elif param.name == 'vehicle.max_steering_angle':
+                self.max_steering_angle = float(param.value)
+            elif param.name == 'pure_pursuit.control_frequency_hz':
+                self.control_frequency_hz = float(param.value)
+
         return SetParametersResult(successful=True)
 
     # ------------------------------------------------------------------

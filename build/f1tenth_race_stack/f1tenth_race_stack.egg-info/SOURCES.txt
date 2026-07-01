@@ -23,6 +23,7 @@ f1tenth_race_stack/mapping/__init__.py
 f1tenth_race_stack/mapping/follow_the_gap.py
 f1tenth_race_stack/racing_line/__init__.py
 f1tenth_race_stack/racing_line/racing_line_generator.py
+f1tenth_race_stack/racing_line/racing_line_publisher.py
 f1tenth_race_stack/state_machine/__init__.py
 f1tenth_race_stack/state_machine/race_state_machine.py
 f1tenth_race_stack/utils/__init__.py
@@ -34,6 +35,9 @@ launch/head_to_head.launch.py
 launch/mapping_autonomous.launch.py
 launch/mapping_joystick.launch.py
 launch/racing.launch.py
+launch/sim_head_to_head.launch.py
+launch/sim_mapping.launch.py
+launch/sim_time_trial.launch.py
 launch/system_id.launch.py
 launch/time_trial.launch.py
 resource/f1tenth_race_stack

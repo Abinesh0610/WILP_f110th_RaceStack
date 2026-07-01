@@ -35,17 +35,6 @@ def generate_launch_description() -> LaunchDescription:
         'racing_line_csv', default_value=os.path.join(maps_dir, 'racing_line.csv')
     )
 
-    slam_node = Node(
-        package='slam_toolbox',
-        executable='localization_slam_toolbox_node',
-        name='slam_toolbox',
-        output='screen',
-        parameters=[
-            os.path.join(config_dir, 'slam_params.yaml'),
-            {'mode': 'localization', 'map_file_name': LaunchConfiguration('map_path')}
-        ]
-    )
-
     racing_line_node = Node(
         package='f1tenth_race_stack',
         executable='racing_line_generator',
@@ -93,19 +82,15 @@ def generate_launch_description() -> LaunchDescription:
         actions=[Node(package='rqt_reconfigure', executable='rqt_reconfigure', output='screen')]
     )
 
-    rviz_node = TimerAction(
-        period=1.0,
-        actions=[Node(package='rviz2', executable='rviz2', arguments=['-d', rviz_config])]
-    )
 
     return LaunchDescription([
         map_path_arg,
         racing_line_csv_arg,
-        slam_node,
+
         racing_line_node,
         mppi_node,
         state_machine_node,
         visualizer_node,
-        rviz_node,
+
         rqt_node,
     ])
