@@ -18,6 +18,8 @@ f1tenth_race_stack.egg-info/top_level.txt
 f1tenth_race_stack.egg-info/zip-safe
 f1tenth_race_stack/controller/__init__.py
 f1tenth_race_stack/controller/mppi_controller.py
+f1tenth_race_stack/controller/mppi_debug.py
+f1tenth_race_stack/controller/mppi_test_corner.py
 f1tenth_race_stack/controller/pure_pursuit.py
 f1tenth_race_stack/mapping/__init__.py
 f1tenth_race_stack/mapping/follow_the_gap.py

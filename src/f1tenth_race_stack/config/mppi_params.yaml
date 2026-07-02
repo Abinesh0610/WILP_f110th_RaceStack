@@ -14,21 +14,21 @@ mppi_controller:
     vehicle:
       wheelbase: 0.324          # [m] Bicycle model wheelbase
       max_steering_angle: 0.43  # [rad] Hard clamp on steering commands
-      max_speed: 10.0           # [m/s] Hard clamp on speed commands
+      max_speed: 3.0            # [m/s] Reduced from 10.0 to prevent corner yeeting
       min_speed: 0.5            # [m/s] Minimum forward speed during racing
 
     # -------------------------------------------------------------------------
     # Rollout Configuration
     # -------------------------------------------------------------------------
     mppi:
-      K: 1000       # Number of parallel trajectory rollouts (CPU-tuned for Intel i7)
+      K: 300       # Reduced from 1000: guarantees <50ms compute time per loop
       T: 20         # Prediction horizon in timesteps
       dt: 0.05      # [s] Integration timestep per rollout step (T * dt = 1.0s lookahead)
 
       # -----------------------------------------------------------------------
       # Exploration / Temperature
       # -----------------------------------------------------------------------
-      lambda: 0.1   # Temperature λ: low→exploit best trajectory, high→explore more
+      lambda: 1.0   # Temperature λ: increased to 1.0 for smoother weighted averaging
 
       # -----------------------------------------------------------------------
       # Control Noise Standard Deviations (Gaussian perturbations added to u_sequence)
@@ -39,14 +39,14 @@ mppi_controller:
       # -----------------------------------------------------------------------
       # Cost Function Weights
       # -----------------------------------------------------------------------
-      weight_reference_track: 10.0    # Penalize lateral deviation from racing line
-      weight_speed_reward: 1.0        # Reward high speed (enters as negative cost)
-      weight_obstacle_penalty: 500.0  # Penalize proximity to LiDAR-detected obstacles
-      weight_heading: 2.0             # Penalize heading misalignment with racing line tangent
-      weight_boundary: 200.0          # Penalize rollouts that leave the track boundary
-      weight_control_smoothness: 0.1  # Penalize large Δu between consecutive timesteps
+      weight_reference_track: 20.0    # HIGH: Primary goal is to follow the racing line
+      weight_speed_reward: 2.0        # Reward speed slightly
+      weight_obstacle_penalty: 15.0   # LOW: We only want a gentle nudge away from opponent cars. If this is too high, it sees track walls as obstacles and freezes!
+      weight_heading: 5.0             # Keep car facing forward
+      weight_boundary: 200.0          # Penalize leaving the track corridor
+      weight_control_smoothness: 3.0  # Smooth out steering jitter
 
       # -----------------------------------------------------------------------
       # Safety Constraints
       # -----------------------------------------------------------------------
-      obstacle_clearance_m: 0.35  # [m] Distance at which obstacle penalty becomes maximum
+      obstacle_clearance_m: 0.15  # [m] Very tight clearance. Just enough to clear the F1TENTH chassis.

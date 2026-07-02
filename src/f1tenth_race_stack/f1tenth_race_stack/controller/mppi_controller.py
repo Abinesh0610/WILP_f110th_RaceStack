@@ -118,6 +118,9 @@ class MPPIController(Node):
         # Initialise speed column to min_speed to avoid zero-velocity cold start
         self.u_sequence[:, 0] = self.min_speed
 
+        # Counter for periodic warm-start resets (prevents multi-lap drift)
+        self._loop_counter: int = 0
+
         # Latest car state: [x, y, yaw, speed]
         self._state: Optional[np.ndarray] = None
 
@@ -183,11 +186,44 @@ class MPPIController(Node):
     def _param_callback(self, params: List[Parameter]) -> SetParametersResult:
         """
         Live parameter update callback. Called whenever any parameter changes.
-        Re-loads all values so the next MPPI loop iteration uses new settings.
-        If K or T changed, also re-shapes the warm-start control sequence.
+        Extracts values directly from the incoming parameter list since get_parameter()
+        will still return the old values at this stage of the callback.
         """
         old_K, old_T = self.K, self.T
-        self._load_params()
+        
+        # Map ROS parameter names to internal instance variable names
+        param_map = {
+            'mppi.K': ('K', int),
+            'mppi.T': ('T', int),
+            'mppi.dt': ('dt', float),
+            'mppi.lambda': ('lambda_', float),
+            'mppi.noise_std_speed': ('noise_std_speed', float),
+            'mppi.noise_std_steering': ('noise_std_steering', float),
+            'mppi.weight_reference_track': ('weight_reference_track', float),
+            'mppi.weight_speed_reward': ('weight_speed_reward', float),
+            'mppi.weight_obstacle_penalty': ('weight_obstacle_penalty', float),
+            'mppi.weight_heading': ('weight_heading', float),
+            'mppi.weight_boundary': ('weight_boundary', float),
+            'mppi.weight_control_smoothness': ('weight_control_smoothness', float),
+            'mppi.obstacle_clearance_m': ('obstacle_clearance_m', float),
+            'vehicle.wheelbase': ('wheelbase', float),
+            'vehicle.max_steering_angle': ('max_steering_angle', float),
+            'vehicle.max_speed': ('max_speed', float),
+            'vehicle.min_speed': ('min_speed', float),
+        }
+
+        for param in params:
+            # ── CRITICAL: Block use_sim_time changes from rqt_reconfigure ──
+            if param.name == 'use_sim_time':
+                self.get_logger().warn(
+                    'Rejected change to use_sim_time via rqt_reconfigure. '
+                    'Do NOT click this checkbox while the car is running!')
+                return SetParametersResult(successful=False)
+
+            if param.name in param_map:
+                attr_name, cast_func = param_map[param.name]
+                setattr(self, attr_name, cast_func(param.value))
+                self.get_logger().info(f"{param.name} → {getattr(self, attr_name)}")
 
         # If rollout dimensions changed, reset the warm-start sequence
         if self.K != old_K or self.T != old_T:
@@ -196,7 +232,6 @@ class MPPIController(Node):
             self.get_logger().info(
                 f'MPPI sequence resized to K={self.K}, T={self.T}')
 
-        self.get_logger().info('MPPI parameters updated live.')
         return SetParametersResult(successful=True)
 
     # ------------------------------------------------------------------
@@ -240,14 +275,18 @@ class MPPIController(Node):
             & (ranges > 0.05)
             & (ranges < msg.range_max)
         )
-        valid_ranges = ranges[valid_mask]
-        valid_angles = angles[valid_mask]
+        
+        # Downsample the scan by taking every 5th point to speed up MPPI calculations
+        # (e.g., 1080 points -> ~216 points). This drastically reduces the N*K matrix size.
+        valid_ranges = ranges[valid_mask][::5]
+        valid_angles = angles[valid_mask][::5]
 
         # Project polar → Cartesian in local frame
         obs_x = valid_ranges * np.cos(valid_angles)  # Forward
         obs_y = valid_ranges * np.sin(valid_angles)  # Left
 
         self._obstacle_points = np.column_stack([obs_x, obs_y])
+
 
     def _racing_line_callback(self, msg: Path) -> None:
         """
@@ -307,8 +346,11 @@ class MPPIController(Node):
         t_start: float = time.perf_counter()
 
         # --- Step 1: Sample K perturbed control sequences ---
-        # Noise shape: (K, T, 2) — independent Gaussian perturbations
-        noise = np.random.randn(self.K, self.T, 2)
+        # Generate constant noise across the prediction horizon for each rollout.
+        # This solves the "white noise cancellation" problem, allowing MPPI to
+        # explore deep, sustained turns instead of just jittering around zero.
+        noise = np.random.randn(self.K, 1, 2)
+        noise = np.repeat(noise, self.T, axis=1)  # (K, T, 2)
         noise[:, :, 0] *= self.noise_std_speed     # Speed perturbation
         noise[:, :, 1] *= self.noise_std_steering  # Steering perturbation
 
@@ -323,13 +365,14 @@ class MPPIController(Node):
         costs: np.ndarray = self._rollout(self._state[:3], U)
 
         # --- Step 4: Add control smoothness cost ---
-        # Penalise large changes in control between consecutive steps
-        # Shape of diffs: (K, T-1, 2)
-        u_diffs = np.diff(U, axis=1)
-        smoothness_cost = self.weight_control_smoothness * np.sum(
-            u_diffs[:, :, 0] ** 2 + u_diffs[:, :, 1] ** 2, axis=(1, 2)
-        )
-        costs += smoothness_cost
+        # Guard: only compute if T > 1, otherwise no diffs exist
+        if self.T > 1:
+            u_diffs = np.diff(U, axis=1)  # (K, T-1, 2)
+            # Sum speed² + steering² over T-1 steps → shape (K,)
+            smoothness_cost = self.weight_control_smoothness * np.sum(
+                u_diffs[:, :, 0] ** 2 + u_diffs[:, :, 1] ** 2, axis=1
+            )
+            costs += smoothness_cost
 
         # --- Step 5: Softmax importance weights ---
         # Shift by minimum cost for numerical stability (standard MPPI trick)
@@ -350,6 +393,20 @@ class MPPIController(Node):
         # Shift the sequence forward by 1 step and replicate the last control
         self.u_sequence = np.roll(self.u_sequence, shift=-1, axis=0)
         self.u_sequence[-1] = self.u_sequence[-2]  # Replicate last action
+
+        # --- Step 9: Clamp warm-start to prevent drift ---
+        # After the weighted average update, the sequence can accumulate a
+        # systematic steering bias over many laps. Hard-clamp it every step.
+        self.u_sequence[:, 0] = np.clip(self.u_sequence[:, 0], self.min_speed, self.max_speed)
+        self.u_sequence[:, 1] = np.clip(self.u_sequence[:, 1], -self.max_steering_angle, self.max_steering_angle)
+
+        # --- Step 10: Periodic hard reset every 200 loops (~10 seconds) ---
+        # Prevents any residual drift from accumulating across multiple laps.
+        self._loop_counter += 1
+        if self._loop_counter % 200 == 0:
+            self.u_sequence[:, 0] = self.min_speed  # Reset speed to minimum
+            self.u_sequence[:, 1] = 0.0              # Reset steering to straight
+            self.get_logger().info('Warm-start sequence reset to prevent drift.')
 
         # --- Timing report ---
         elapsed_ms: float = (time.perf_counter() - t_start) * 1000.0
@@ -430,6 +487,13 @@ class MPPIController(Node):
 
             # --- Cost 4: Obstacle penalty from LiDAR ---
             trajectory_costs += self._obstacle_cost(x, y)
+
+            # --- Cost 5: Boundary / wall penalty ---
+            # If a rollout point is more than boundary_threshold metres from
+            # the nearest racing line point, it has likely left the track.
+            boundary_threshold = 1.2  # [m] — half the Levine corridor width
+            off_track = nearest_dist > boundary_threshold
+            trajectory_costs += self.weight_boundary * off_track.astype(np.float64)
 
         return trajectory_costs
 

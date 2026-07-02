@@ -166,6 +166,10 @@ ros2 launch f1tenth_race_stack sim_time_trial.launch.py \
 ```
 The car will start driving automatically after ~5 seconds.
 
+> 🖥️ **A lap counter popup window appears automatically after ~6 seconds.**
+> It shows the current lap number (green), last lap time, and best lap time (gold).
+> The counter resets to `0` every time you restart the launch file.
+
 ---
 
 #### ► On the Real Car
@@ -184,6 +188,10 @@ ros2 launch f1tenth_race_stack time_trial.launch.py \
   racing_line_csv:=$HOME/ABINESH_Packages/racer_ws/src/f1tenth_race_stack/maps/my_new_track_racing_line.csv
 ```
 > ⚠️ **Hold Button 5 (SF) on RadioMaster MT12 to start the car.**
+
+> 🖥️ **A lap counter popup window appears automatically after ~6 seconds.**
+> It shows the current lap number (green), last lap time, and best lap time (gold).
+> The counter resets to `0` every time you restart the launch file.
 
 ---
 
@@ -323,6 +331,10 @@ Here is a breakdown of every node in this stack and how it works:
 * **`vesc_bridge.py`**: Converts Ackermann commands (`speed`, `steering`) into VESC ERPM and Servo signals.
 * **`system_id_driver.py`**: An open-loop controller used strictly for calibrating the ERPM-to-m/s ratio.
 * **`visualizer.py`**: Publishes rich ROS 2 `MarkerArray` topics to draw the racing line, velocity arrows, and safety bubbles in RViz.
+* **`lap_counter.py` (Lap Counter Popup)**
+  * **Role:** Session lap counter and timing display during Time Trials.
+  * **How it works:** Subscribes to `/ego_racecar/odom`. Records the car's GPS (x, y) position at startup as the Start/Finish line. Once the car travels more than `departure_threshold` (2.5 m) away from the start, it waits for the car to return within `arrival_threshold` (1.5 m) — at that point it increments the lap count. A `tkinter` GUI popup window (always-on-top, dark theme) displays the current lap count in large green text, along with last lap time and best lap time in gold.
+  * **Reset behaviour:** Every time the launch file is stopped (`Ctrl+C`) and restarted, the counter resets to `0` automatically because the node records a fresh start position on its first odom message.
 
 ---
 

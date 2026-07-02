@@ -1,0 +1,25 @@
+running develop
+running egg_info
+writing f1tenth_race_stack.egg-info/PKG-INFO
+writing dependency_links to f1tenth_race_stack.egg-info/dependency_links.txt
+writing entry points to f1tenth_race_stack.egg-info/entry_points.txt
+writing requirements to f1tenth_race_stack.egg-info/requires.txt
+writing top-level names to f1tenth_race_stack.egg-info/top_level.txt
+reading manifest file 'f1tenth_race_stack.egg-info/SOURCES.txt'
+writing manifest file 'f1tenth_race_stack.egg-info/SOURCES.txt'
+running build_ext
+Creating /home/bits/ABINESH_Packages/racer_ws/install/f1tenth_race_stack/lib/python3.10/site-packages/f1tenth-race-stack.egg-link (link to .)
+Installing deadman_switch script to /home/bits/ABINESH_Packages/racer_ws/install/f1tenth_race_stack/lib/f1tenth_race_stack
+Installing follow_the_gap script to /home/bits/ABINESH_Packages/racer_ws/install/f1tenth_race_stack/lib/f1tenth_race_stack
+Installing lap_counter script to /home/bits/ABINESH_Packages/racer_ws/install/f1tenth_race_stack/lib/f1tenth_race_stack
+Installing mppi_controller script to /home/bits/ABINESH_Packages/racer_ws/install/f1tenth_race_stack/lib/f1tenth_race_stack
+Installing pure_pursuit script to /home/bits/ABINESH_Packages/racer_ws/install/f1tenth_race_stack/lib/f1tenth_race_stack
+Installing race_state_machine script to /home/bits/ABINESH_Packages/racer_ws/install/f1tenth_race_stack/lib/f1tenth_race_stack
+Installing racing_line_generator script to /home/bits/ABINESH_Packages/racer_ws/install/f1tenth_race_stack/lib/f1tenth_race_stack
+Installing racing_line_publisher script to /home/bits/ABINESH_Packages/racer_ws/install/f1tenth_race_stack/lib/f1tenth_race_stack
+Installing system_id_driver script to /home/bits/ABINESH_Packages/racer_ws/install/f1tenth_race_stack/lib/f1tenth_race_stack
+Installing vesc_bridge script to /home/bits/ABINESH_Packages/racer_ws/install/f1tenth_race_stack/lib/f1tenth_race_stack
+Installing visualizer script to /home/bits/ABINESH_Packages/racer_ws/install/f1tenth_race_stack/lib/f1tenth_race_stack
+
+Installed /home/bits/ABINESH_Packages/racer_ws/build/f1tenth_race_stack
+running symlink_data

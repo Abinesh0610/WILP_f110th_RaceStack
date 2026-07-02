@@ -115,10 +115,11 @@ def generate_launch_description() -> LaunchDescription:
         )]
     )
 
-    # rqt_node = TimerAction(
-    #     period=2.0,
-    #     actions=[Node(package='rqt_reconfigure', executable='rqt_reconfigure', output='screen')]
-    # )
+    # RQT live-tuning popup — appears 2s after launch, just like head-to-head
+    rqt_node = TimerAction(
+        period=2.0,
+        actions=[Node(package='rqt_reconfigure', executable='rqt_reconfigure', output='screen')]
+    )
 
 
     return LaunchDescription([
@@ -130,6 +131,5 @@ def generate_launch_description() -> LaunchDescription:
         state_machine_node,
         visualizer_node,
         lap_counter_node,
-
-        # rqt_node,
+        rqt_node,
     ])

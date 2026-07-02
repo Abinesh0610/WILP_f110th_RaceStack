@@ -3,14 +3,14 @@ sim_head_to_head.launch.py
 ==========================
 Launch file for Head-to-Head racing mode in SIMULATION.
 
-This is identical to `head_to_head.launch.py`, but it removes hardware-specific
-nodes (like vesc_bridge) so you can run the F1TENTH Gym simulator cleanly.
+Uses the MPPI controller which simulates 1000 rollouts per step to find
+the optimal trajectory — automatically avoids opponent cars detected via LiDAR.
 
 Usage:
     Terminal 1: ros2 launch f1tenth_gym_ros gym_bridge_launch.py
     Terminal 2: ros2 launch f1tenth_race_stack sim_head_to_head.launch.py \\
-                    map_path:=/path/to/maps/f1tenth_track.yaml \\
-                    racing_line_csv:=/path/to/maps/racing_line.csv
+                    map_path:=/path/to/maps/levine_track.yaml \\
+                    racing_line_csv:=/path/to/maps/levine_racing_line.csv
 """
 
 import os
@@ -25,49 +25,50 @@ from launch_ros.actions import Node
 def generate_launch_description() -> LaunchDescription:
     pkg_share = get_package_share_directory('f1tenth_race_stack')
     config_dir = os.path.join(pkg_share, 'config')
-    rviz_config = os.path.join(pkg_share, 'rviz', 'racing.rviz')
-    maps_dir = os.path.join(pkg_share, 'maps')
+    maps_dir   = os.path.join(pkg_share, 'maps')
 
     map_path_arg = DeclareLaunchArgument(
-        'map_path', default_value=os.path.join(maps_dir, 'f1tenth_track.yaml')
+        'map_path', default_value=os.path.join(maps_dir, 'levine_track.yaml')
     )
     racing_line_csv_arg = DeclareLaunchArgument(
-        'racing_line_csv', default_value=os.path.join(maps_dir, 'racing_line.csv')
+        'racing_line_csv', default_value=os.path.join(maps_dir, 'levine_racing_line.csv')
     )
 
-    racing_line_node = Node(
+    # Load pre-computed CSV and publish /racing_line at 5 Hz
+    # (much faster than re-generating from the map on every launch)
+    csv_publisher_node = Node(
         package='f1tenth_race_stack',
-        executable='racing_line_generator',
-        name='racing_line_generator',
+        executable='racing_line_publisher',
+        name='racing_line_publisher',
+        output='screen',
         parameters=[{
-            'map_path': LaunchConfiguration('map_path'),
-            'output_csv': LaunchConfiguration('racing_line_csv'),
-            'v_max': 6.0,
-            'v_min': 1.0,
-            'curvature_gain': 3.0,
+            'racing_line_csv': LaunchConfiguration('racing_line_csv'),
         }]
     )
 
-    mppi_node = Node(
-        package='f1tenth_race_stack',
-        executable='mppi_controller',
-        name='mppi_controller',
-        output='screen',
-        parameters=[
-            os.path.join(config_dir, 'mppi_params.yaml'),
-            os.path.join(config_dir, 'vehicle_params.yaml'),
-        ],
-        remappings=[
-            ('/drive_cmd', '/drive')
-        ]
+    # MPPI controller — delayed 5 s so racing line is published first
+    # NOTE: vehicle_params.yaml is NOT passed here (plain YAML, not ROS params format)
+    mppi_node = TimerAction(
+        period=5.0,
+        actions=[Node(
+            package='f1tenth_race_stack',
+            executable='mppi_controller',
+            name='mppi_controller',
+            output='screen',
+            parameters=[
+                os.path.join(config_dir, 'mppi_params.yaml'),
+            ],
+            remappings=[
+                ('/drive_cmd', '/drive')
+            ]
+        )]
     )
-
-
 
     state_machine_node = Node(
         package='f1tenth_race_stack',
         executable='race_state_machine',
         name='race_state_machine',
+        output='screen',
         parameters=[{'initial_state': 'HEAD_TO_HEAD'}]
     )
 
@@ -75,6 +76,7 @@ def generate_launch_description() -> LaunchDescription:
         package='f1tenth_race_stack',
         executable='visualizer',
         name='race_stack_visualizer',
+        output='screen',
     )
 
     rqt_node = TimerAction(
@@ -82,12 +84,11 @@ def generate_launch_description() -> LaunchDescription:
         actions=[Node(package='rqt_reconfigure', executable='rqt_reconfigure', output='screen')]
     )
 
-
     return LaunchDescription([
         map_path_arg,
         racing_line_csv_arg,
 
-        racing_line_node,
+        csv_publisher_node,
         mppi_node,
         state_machine_node,
         visualizer_node,
